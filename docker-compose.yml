@@ -1,0 +1,25 @@
+version: "2"
+services:
+  faraday:
+    build: ./faraday
+    command: /root/run.sh
+    volumes:
+      - ./volumes/report:/root/.faraday/report/workspace/
+    ports:
+      - "80:5984"
+    container_name: faraday
+
+  jenkins:
+    build: ./jenkins
+    links:
+      - owasp:owasp
+    ports:
+      - "8080:8080"
+    container_name: jenkins
+
+  owasp:
+    build: ./owasp
+    command: zap.sh -daemon -port 8090 -config api.disablekey=true -host 0.0.0.0
+    ports:
+      - "8090:8090"
+    container_name: owasp
